@@ -29,13 +29,19 @@ function getRecentData()
                                 table.childNodes[i].childNodes[j].className === "rgAltRow")
                             {
                                 //console.log(j, table.childNodes[i].childNodes[j].innerHTML);
-                                nodeNames.push(j);
+                                parseTableRow(table.childNodes[i].childNodes[j].innerHTML);
                             }
                         }
                     }
                 }
               }
             });
-            console.log(nodeNames);
+            //console.log(nodeNames[nodeNames.length - 1]);
         });
+		
+	function parseTableRow(tableRow)
+	{
+		var parsedRow = $.parseHTML(tableRow);
+        $(".currentYear").append("<td>1</td>");
+	}
 }

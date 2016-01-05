@@ -1,9 +1,44 @@
 extend layout
 
 block content
-  p
-    | Username: <input id="username" />
-  p
-    | Password: <input id="password" type="password" />
-  p
-    <button id="submit" onclick="getRecentData()">Log in </submit>
+  table
+    thead.dataHeader
+      tr
+        th
+          | Dataset
+        th
+          | GP
+        th
+          | PA
+        th
+          | HR
+        th
+          | R
+        th
+          | RBI
+        th
+          | SB
+        th
+          | BB%
+        th
+          | K%
+        th
+          | ISO
+        th
+          | BABIP
+        th
+          | AVG
+        th
+          | OBP
+        th
+          | SLG
+    tbody.dataContent
+      tr.career
+        td
+          | Career Average
+      tr.threeYear
+        td
+          | 3 Year Average
+      tr.currentYear
+        td
+          | Current Year
