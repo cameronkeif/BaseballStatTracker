@@ -14,26 +14,27 @@ function compile(str, path) {
     .use(nib());
 }
 
-app.post('/findPlayers', function(req, res) {
-    var playerName = "";
-    req.on('data', function (data) {
-            playerName += data;
-        });
-    console.log("Name:" + req.body);
-    var sqlite3 = require('sqlite3').verbose();
-    var db = new sqlite3.Database('baseball.db');
-    db.each("SELECT * FROM players WHERE name LIKE '%" + "Cab" + "%';",
-        function(err, row)
-        {
-            if(err)
-            {
-                console.log(err);
-            }
-            else
-            {
-                //console.log(row.NAME)
-            }
-        });
+app.get('/findPlayers', function(request, response) {
+  var playerName = request.query.playerName;
+  var sqlite3 = require('sqlite3').verbose();
+  var db = new sqlite3.Database('baseball.db');
+  var matchingPlayers = "";
+  db.each("SELECT * FROM players WHERE name LIKE '%" + playerName + "%';",
+    function(err, row)
+    {
+      if(err)
+      {
+        console.log(err);
+      }
+      else
+      {
+        matchingPlayers += '<li id="' + row.ID + '">' + row.NAME + ' - ' + row.TEAM + '</li>';
+      }
+    },
+    function(err, rows) 
+    {
+      response.send(matchingPlayers);
+    });
 });
 
 app.set('views', __dirname + '/views')
