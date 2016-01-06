@@ -142,7 +142,7 @@ footer {
 }
 .dataContent td {
   white-space: nowrap;
-  padding-top: 5px;
+  padding: 5px;
   border-bottom: 1px solid #babdb3;
   border-right: 1px solid #babdb3;
 }

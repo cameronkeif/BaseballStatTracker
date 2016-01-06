@@ -1,6 +1,8 @@
 extend layout
 
 block content
+  input(id="playerSearch", placeholder="Enter player name")
+  button(id="btnSearch")
   table
     thead.dataHeader
       tr
@@ -33,12 +35,12 @@ block content
         th
           | SLG
     tbody.dataContent
-      tr.career
+      tr#careerAverage
         td
           | Career Average
-      tr.threeYear
+      tr#threeYearAverage
         td
           | 3 Year Average
-      tr.currentYear
+      tr#currentYear
         td
           | Current Year

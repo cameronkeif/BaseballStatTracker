@@ -14,6 +14,25 @@ function compile(str, path) {
     .use(nib());
 }
 
+app.post('/findPlayers', function(req, res) {
+    var playerName = req.params.playerName;
+    console.log(playerName);
+    var sqlite3 = require('sqlite3').verbose();
+    var db = new sqlite3.Database('baseball.db');
+    db.each("SELECT * FROM players WHERE name LIKE '%" + "Cab" + "%';",
+        function(err, row)
+        {
+            if(err)
+            {
+                console.log(err);
+            }
+            else
+            {
+                console.log(row.NAME)
+            }
+        });
+});
+
 app.set('views', __dirname + '/views')
 app.set('view engine', 'jade')
 app.use(express.logger('dev'))
