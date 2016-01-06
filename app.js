@@ -15,8 +15,11 @@ function compile(str, path) {
 }
 
 app.post('/findPlayers', function(req, res) {
-    var playerName = req.params.playerName;
-    console.log(playerName);
+    var playerName = "";
+    req.on('data', function (data) {
+            playerName += data;
+        });
+    console.log("Name:" + req.body);
     var sqlite3 = require('sqlite3').verbose();
     var db = new sqlite3.Database('baseball.db');
     db.each("SELECT * FROM players WHERE name LIKE '%" + "Cab" + "%';",
@@ -28,7 +31,7 @@ app.post('/findPlayers', function(req, res) {
             }
             else
             {
-                console.log(row.NAME)
+                //console.log(row.NAME)
             }
         });
 });
