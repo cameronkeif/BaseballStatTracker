@@ -2,9 +2,10 @@
  * Module dependencies
  */
 var express = require('express')
-  , stylus = require('stylus')
-  , nib = require('nib')
+var stylus = require('stylus')
+var nib = require('nib')
 
+var logger = require('morgan');
 
 var app = express()
 
@@ -39,7 +40,7 @@ app.get('/findPlayers', function(request, response) {
 
 app.set('views', __dirname + '/views')
 app.set('view engine', 'jade')
-app.use(express.logger('dev'))
+app.use(logger())
 app.use(stylus.middleware(
   { src: __dirname + '/public'
   , compile: compile
