@@ -43,33 +43,35 @@ function getRecentData(playerId)
             var careerData = []
             var html = $.parseHTML(data);
             $.each( html, function( tableNodesIndex, el ) {
-              if (tableNodesIndex === 32)
-              {
-                var table = $(el.innerHTML).find("#SeasonStats1_dgSeason11_ctl00")[0];
-                for(tableNodesIndex = 0; tableNodesIndex < table.childNodes.length; tableNodesIndex++)
+                if(el.innerHTML && el.innerHTML.includes("SeasonStats1_dgSeason11_ctl00"))
                 {
-                    if (table.childNodes[tableNodesIndex].nodeName === "TBODY")
+                    var table = $(el.innerHTML).find("#SeasonStats1_dgSeason11_ctl00")[0];
+                    if (table)
                     {
-                        console.log(tableNodesIndex);
-                        for(tableRowIndex = 0; tableRowIndex < table.childNodes[tableNodesIndex].childNodes.length; tableRowIndex++)
+                        for(tableNodesIndex = 0; tableNodesIndex < table.childNodes.length; tableNodesIndex++)
                         {
-                            if (table.childNodes[tableNodesIndex].childNodes[tableRowIndex].className === "rgRow" ||
-                                table.childNodes[tableNodesIndex].childNodes[tableRowIndex].className === "rgAltRow")
+                            if (table.childNodes[tableNodesIndex].nodeName === "TBODY")
                             {
-                                careerData.push(parseTableRow(table.childNodes[tableNodesIndex].childNodes[tableRowIndex].innerHTML));
+                                for(tableRowIndex = 0; tableRowIndex < table.childNodes[tableNodesIndex].childNodes.length; tableRowIndex++)
+                                {
+                                    if (table.childNodes[tableNodesIndex].childNodes[tableRowIndex].className === "rgRow" ||
+                                        table.childNodes[tableNodesIndex].childNodes[tableRowIndex].className === "rgAltRow")
+                                    {
+                                        careerData.push(parseTableRow(table.childNodes[tableNodesIndex].childNodes[tableRowIndex].innerHTML));
+                                    }
+                                }
                             }
                         }
                     }
+                    var averageCareerData = calculateAverages(careerData.slice(0, -2));
+                    populateTable(averageCareerData, "#careerAverage", "Career Average");
+
+                    var averageCareerData = calculateAverages(careerData.slice(careerData.length - 4, careerData.length - 2));
+                    populateTable(averageCareerData, "#threeYearAverage", "Three Year Average");
+
+                    var averageCareerData = calculateAverages(careerData.slice(-1));
+                    populateTable(averageCareerData, "#currentYear", "Current Year");
                 }
-                var averageCareerData = calculateAverages(careerData.slice(0, -2));
-                populateTable(averageCareerData, "#careerAverage", "Career Average");
-
-                var averageCareerData = calculateAverages(careerData.slice(careerData.length - 4, careerData.length - 2));
-                populateTable(averageCareerData, "#threeYearAverage", "Three Year Average");
-
-                var averageCareerData = calculateAverages(careerData.slice(-1));
-                populateTable(averageCareerData, "#currentYear", "Current Year");
-              }
             });
         });
         
@@ -114,80 +116,64 @@ function getRecentData(playerId)
 
     function calculateAverages(dataSet)
     {
-        var i = 0;
-
-        var Games = 0, PlateAppearances = 0, Homeruns = 0, Runs = 0, RBIs = 0, Steals = 0, WalkRate = 0, StrikeOutRate = 0;
-        var IsolatedPower = 0, BABIP = 0, BattingAverage = 0, OnBasePercentage = 0, SluggingPercentage = 0;
         var validYears = 0;
-        for (i; i < dataSet.length; i++)
+        var playerData = {
+                    Games: 0,
+                    PlateAppearances: 0,
+                    Homeruns: 0,
+                    Runs: 0,
+                    RBIs: 0,
+                    Steals: 0,
+                    WalkRate: 0,
+                    StrikeOutRate: 0,
+                    IsolatedPower: 0,
+                    BABIP: 0,
+                    BattingAverage: 0,
+                    OnBasePercentage: 0,
+                    SluggingPercentage: 0
+        }
+
+        for (var i = 0; i < dataSet.length; i++)
         {
             if (!dataSet[i])
             {
                 continue;
             }
-            Games += dataSet[i].Games;
-            PlateAppearances += dataSet[i].PlateAppearances;
-            Homeruns += dataSet[i].Homeruns;
-            Runs += dataSet[i].Runs;
-            RBIs += dataSet[i].RBIs;
-            Steals += dataSet[i].Steals;
-            WalkRate += dataSet[i].WalkRate;
-            StrikeOutRate += dataSet[i].StrikeOutRate;
-            IsolatedPower += dataSet[i].IsolatedPower;
-            BABIP += dataSet[i].BABIP;
-            BattingAverage += dataSet[i].BattingAverage;
-            OnBasePercentage += dataSet[i].OnBasePercentage;
-            SluggingPercentage += dataSet[i].SluggingPercentage;
+            playerData.Games += dataSet[i].Games;
+            playerData.PlateAppearances += dataSet[i].PlateAppearances;
+            playerData.Homeruns += dataSet[i].Homeruns;
+            playerData.Runs += dataSet[i].Runs;
+            playerData.RBIs += dataSet[i].RBIs;
+            playerData.Steals += dataSet[i].Steals;
+            playerData.WalkRate += dataSet[i].WalkRate;
+            playerData.StrikeOutRate += dataSet[i].StrikeOutRate;
+            playerData.IsolatedPower += dataSet[i].IsolatedPower;
+            playerData.BABIP += dataSet[i].BABIP;
+            playerData.BattingAverage += dataSet[i].BattingAverage;
+            playerData.OnBasePercentage += dataSet[i].OnBasePercentage;
+            playerData.SluggingPercentage += dataSet[i].SluggingPercentage;
             validYears++;
         }
+
         if (validYears > 0)
         {
-            Games = (Games / validYears).toFixed(0);
-            PlateAppearances = (PlateAppearances / i).toFixed(0);
-            Homeruns = (Homeruns / validYears).toFixed(0);
-            Runs = (Runs / validYears).toFixed(0);
-            RBIs = (RBIs / validYears).toFixed(0);
-            Steals = (Steals / validYears).toFixed(0);
+            playerData.Games = (playerData.Games / validYears).toFixed(0);
+            playerData.PlateAppearances = (playerData.PlateAppearances / i).toFixed(0);
+            playerData.Homeruns = (playerData.Homeruns / validYears).toFixed(0);
+            playerData.Runs = (playerData.Runs / validYears).toFixed(0);
+            playerData.RBIs = (playerData.RBIs / validYears).toFixed(0);
+            playerData.Steals = (playerData.Steals / validYears).toFixed(0);
 
-            WalkRate = (WalkRate / validYears).toFixed(2);
-            StrikeOutRate = (StrikeOutRate / validYears).toFixed(2);
+            playerData.WalkRate = (playerData.WalkRate / validYears).toFixed(2);
+            playerData.StrikeOutRate = (playerData.StrikeOutRate / validYears).toFixed(2);
 
-            IsolatedPower = (IsolatedPower / validYears).toFixed(3);
-            BABIP = (BABIP / validYears).toFixed(3);
-            BattingAverage = (BattingAverage / validYears).toFixed(3);
-            OnBasePercentage = (OnBasePercentage / validYears).toFixed(3);
-            SluggingPercentage = (SluggingPercentage / validYears).toFixed(3);
+            playerData.IsolatedPower = (playerData.IsolatedPower / validYears).toFixed(3);
+            playerData.BABIP = (playerData.BABIP / validYears).toFixed(3);
+            playerData.BattingAverage = (playerData.BattingAverage / validYears).toFixed(3);
+            playerData.OnBasePercentage = (playerData.OnBasePercentage / validYears).toFixed(3);
+            playerData.SluggingPercentage = (playerData.SluggingPercentage / validYears).toFixed(3);
         }
-        else
-        {
-            Games = 0;
-            PlateAppearances = 0;
-            Homeruns = 0;
-            Runs = 0;
-            RBIs = 0;
-            Steals = 0;
-            WalkRate = 0;
-            IsolatedPower = 0;
-            BABIP = 0;
-            BattingAverage = 0;
-            OnBasePercentage = 0;
-            SluggingPercentage = 0;
-        }
-        return {
-                    Games: Games,
-                    PlateAppearances: PlateAppearances,
-                    Homeruns: Homeruns,
-                    Runs: Runs,
-                    RBIs: RBIs,
-                    Steals: Steals,
-                    WalkRate: WalkRate,
-                    StrikeOutRate: StrikeOutRate,
-                    IsolatedPower: IsolatedPower,
-                    BABIP: BABIP,
-                    BattingAverage: BattingAverage,
-                    OnBasePercentage: OnBasePercentage,
-                    SluggingPercentage: SluggingPercentage
-                }
+        return playerData;
     }
 
     function populateTable(averagedData, tableRowId, label)
