@@ -1,5 +1,5 @@
 {
-  "name": "beer_tracker",
+  "name": "baseballStatTracker",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
@@ -7,8 +7,11 @@
     "express": "^4.13.3",
     "express-generator": "^4.13.1",
     "g": "^2.0.0",
+    "jade": "^1.11.0",
     "morgan": "^1.7.0",
-    "sqlite3": "^3.1.1"
+    "nib": "^1.1.2",
+    "sqlite3": "^3.1.1",
+    "stylus": "^0.54.5"
   },
   "devDependencies": {},
   "scripts": {

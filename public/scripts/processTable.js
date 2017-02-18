@@ -36,9 +36,14 @@ function resetData()
 function getRecentData(playerId)
 {
     resetData();
-    $.get("http://cors.io/?u=http://www.fangraphs.com/statss.aspx?playerid=" + playerId,
-        function(data) 
-        {
+    $.ajax({
+    type: 'GET',
+    url: "http://www.baseball-reference.com/statss.aspx?playerid=" + playerId,
+    crossDomain: true,
+    xhrFields: {
+      withCredentials: true
+   },
+    success: function(data) {
             var tableNodesIndex, tableRowIndex;
             var careerData = []
             var html = $.parseHTML(data);
@@ -73,7 +78,7 @@ function getRecentData(playerId)
                     populateTable(averageCareerData, "#currentYear", "Current Year");
                 }
             });
-        });
+        }});
         
     function parseTableRow(tableRow)
     {
