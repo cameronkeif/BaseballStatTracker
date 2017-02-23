@@ -67,9 +67,15 @@ function decimalRound(value, precision)
  */
 function calculateBattingAverage(plateAppearances, hits, precision)
 {
-    
     return decimalRound((hits / plateAppearances), precision);
 }
+
+function calculateWalkPercentage(plateAppearances, walks, precision)
+{
+    return decimalRound((walks / plateAppearances) * 100, precision);
+}
+
+function calculateBabip(hits, homeRuns, atBats, Strikeouts, SacrificeFlys);
 
 function generateArrayForTablePopulation(data, label, numberOfSeasons)
 {
@@ -103,8 +109,8 @@ function generateArrayForTablePopulation(data, label, numberOfSeasons)
     tableDataArray[4] = totals['Runs'] / numberOfSeasons;
     tableDataArray[5] = totals['RBIs'] / numberOfSeasons;
     tableDataArray[6] = totals['Steals'] / numberOfSeasons;
-    tableDataArray[7] = 0;
-    tableDataArray[8] = 0;
+    tableDataArray[7] = calculateWalkPercentage(totals['Plate Apperances'], totals['Walks'], RATIO_STAT_PRECISION_DIGITS);
+    tableDataArray[8] = calculateStrikeoutPercentage(totals['Plate Apperances'], totals['Strikeouts'], RATIO_STAT_PRECISION_DIGITS);
     tableDataArray[9] = 0;
     tableDataArray[10] = 0;
     tableDataArray[11] = calculateBattingAverage(totals['Plate Apperances'], totals['Hits'], RATIO_STAT_PRECISION_DIGITS);
@@ -128,7 +134,7 @@ function getRecentData(playerId)
     });
 }
 
-$( document ).ready(function() {
+$(document).ready(function() {
     initializeData();
     $("#btnSearch").click(function() {
     $.ajax({
