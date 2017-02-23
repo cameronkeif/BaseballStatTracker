@@ -71,23 +71,24 @@ app.get('/getPlayerData', function(request, response) {
   var numberOfCells = 22;
   var year;
   var cellNumber;
+  var playerId = request.query.playerId;
+  var url = 'http://www.fangraphs.com/statss.aspx?playerid=' + playerId;
+  var fangraphsTabledataSelector = '#SeasonStats1_dgSeason1_ctl00 tbody';
+  var mlbSeasonRowSelector = ['tr:not([class*=" grid"]) td'];
 
-  xray('http://www.fangraphs.com/statss.aspx?playerid=12916', '#SeasonStats1_dgSeason1_ctl00 tbody', ['tr:not([class*=" grid"]) td'])(function(err, data) {
+  xray(url, fangraphsTabledataSelector, mlbSeasonRowSelector)(function(err, data) {
     for (i = 0; i < data.length; i++) {
       cellNumber = i % numberOfCells;
       switch(cellNumber)
       {
-        // Number of games
         case 2:
           statsObject['Games Played'] = data[i];
           break;
 
-        // Plate Appearances
         case 3:
           statsObject['At Bats'] = data[i];
           break;
 
-        // Plate Appearances
         case 4:
           statsObject['Plate Apperances'] = data[i];
           break;
