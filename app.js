@@ -5,17 +5,37 @@ var express = require('express')
 var stylus = require('stylus')
 var nib = require('nib')
 var xray = require('x-ray');
-
 var logger = require('morgan');
 
 var app = express()
 
-function compile(str, path) {
+function compile(str, path) 
+{
   return stylus(str)
     .set('filename', path)
     .use(nib());
 }
 
+app.set('views', __dirname + '/views')
+app.set('view engine', 'jade')
+app.use(logger('combined'))
+app.use(stylus.middleware(
+  { src: __dirname + '/public'
+  , compile: compile
+  }
+));
+app.use(express.static(__dirname + '/public'))
+
+app.get('/', function (req, res) {
+  res.render('index',
+  { title : 'Home' }
+  )
+});
+
+/* Fetches all matching players from the Database
+ * Matching is defined as any part of the name containing that string. aka "John" 
+ * would return "John Smith" and "Jim Johnson"
+ */
 app.get('/findPlayers', function(request, response) {
   var playerName = request.query.playerName;
   var sqlite3 = require('sqlite3').verbose();
@@ -39,23 +59,7 @@ app.get('/findPlayers', function(request, response) {
     });
 });
 
-app.set('views', __dirname + '/views')
-app.set('view engine', 'jade')
-app.use(logger())
-app.use(stylus.middleware(
-  { src: __dirname + '/public'
-  , compile: compile
-  }
-))
-app.use(express.static(__dirname + '/public'))
-
-app.get('/', function (req, res) {
-  res.render('index',
-  { title : 'Home' }
-  )
-})
-
-app.get('/test', function(request, response) {
+app.get('/getPlayerData', function(request, response) {
   var Xray = require('x-ray');
   var xray = Xray();
   var i;
@@ -66,7 +70,7 @@ app.get('/test', function(request, response) {
   var cellNumber;
   var games;
 
-  xray('http://www.fangraphs.com/statss.aspx?playerid=12916', '#SeasonStats1_dgSeason11_ctl00 tbody', ["tr:not([class*=\" grid\"]) td"])(function(err, data) {
+  xray('http://www.fangraphs.com/statss.aspx?playerid=12916', '#SeasonStats1_dgSeason11_ctl00 tbody', ['tr:not([class*=" grid"]) td'])(function(err, data) {
     for (i = 0; i < data.length; i++) {
       cellNumber = i % numberOfCells;
       switch(cellNumber)
