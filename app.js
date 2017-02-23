@@ -59,58 +59,76 @@ app.get('/findPlayers', function(request, response) {
     });
 });
 
+/* Gets all the COUNTING stats for the player.
+ * We want the counting stats so the true averages over multiple seasons can be calculated.
+ */
 app.get('/getPlayerData', function(request, response) {
   var Xray = require('x-ray');
   var xray = Xray();
   var i;
-  var returnObject = {};
+  var returnArray = [];
   var statsObject = {};
-  var numberOfCells = 21;
+  var numberOfCells = 22;
   var year;
   var cellNumber;
-  var games;
 
-  xray('http://www.fangraphs.com/statss.aspx?playerid=12916', '#SeasonStats1_dgSeason11_ctl00 tbody', ['tr:not([class*=" grid"]) td'])(function(err, data) {
+  xray('http://www.fangraphs.com/statss.aspx?playerid=12916', '#SeasonStats1_dgSeason1_ctl00 tbody', ['tr:not([class*=" grid"]) td'])(function(err, data) {
     for (i = 0; i < data.length; i++) {
       cellNumber = i % numberOfCells;
       switch(cellNumber)
       {
-        // Year
-        case 0:
-          year = data[i];
-          break;
-
         // Number of games
         case 2:
-          games = data[i];
-          statsObject['Games'] = games;
+          statsObject['Games Played'] = data[i];
+          break;
+
+        // Plate Appearances
+        case 3:
+          statsObject['At Bats'] = data[i];
+          break;
+
+        // Plate Appearances
+        case 4:
+          statsObject['Plate Apperances'] = data[i];
+          break;
+
+        case 5:
+          statsObject['Hits'] = data[i];
+          break;
+
+        case 9:
+          statsObject['Home Runs'] = data[i];
+          break;
+
+        case 10:
+          statsObject['Runs'] = data[i];
+          break;
+
+        case 11:
+          statsObject['RBIs'] = data[i];
+          break;
+
+        case 12:
+          statsObject['Walks'] = data[i];
+          break;
+
+        case 14:
+          statsObject['Strikeouts'] = data[i];
+          break;
+
+        case 19:
+          statsObject['Steals'] = data[i];
           break;
 
         // End of the row, put the data into the return object
         case numberOfCells - 1:
-          returnObject[year] = statsObject;
+          returnArray.push(statsObject);
           statsObject = {};
           break;
       }
-      
-      /*
-        var Games = Number(parsedRow[3].outerText);
-        var Homeruns = Number(parsedRow[5].outerText);
-        var Runs = Number(parsedRow[6].outerText);
-        var RBIs = Number(parsedRow[7].outerText);
-        var Steals = Number(parsedRow[8].outerText);
-        var WalkRate = Number(parsedRow[9].outerText.replace("%", ""));
-        var StrikeOutRate = Number(parsedRow[10].outerText.replace("%", ""));
-        var IsolatedPower = Number(parsedRow[11].outerText);
-        var BABIP = Number(parsedRow[12].outerText);
-        var BattingAverage = Number(parsedRow[13].outerText);
-        var OnBasePercentage = Number(parsedRow[14].outerText);
-        var SluggingPercentage = Number(parsedRow[15].outerText);
-      */
     }
 
-
-    response.send(JSON.stringify(returnObject));
+    response.send(JSON.stringify(returnArray));
   })
 });
 
