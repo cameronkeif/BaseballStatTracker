@@ -1,32 +1,52 @@
-$( document ).ready(function() {
-    initializeData();
-
-    $("#btnSearch").click(function() {
-    $.ajax({
-        type: 'GET',
-        url: 'http://localhost:3002/findPlayers?playerName=' + $("#playerSearch").val()
-    }).done(function(data){
-        $("#matchingPlayers").empty();
-        $("#matchingPlayers").append(data);
-        $('#matchingPlayers > li').each(function() {
-            var id = $(this).attr("id");
-            $(this).click(function() {
-                getRecentData(id)
-            });
-        })
-    });
-  });
-});
-
-function initializeData()
+/* Converts an array into an HTML table row 
+ * dataArray: the array to convert.
+ * 
+ * returns: a string containing a series of cells, one for each member of dataArray
+ */
+function arrayToTableCells(dataArray) 
 {
-    resetData();
-    $('#careerAverage').append('<td>Career Average</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td>');
-    $('#threeYearAverage').append('<td>Three Year Average</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td>');
-    $('#currentYear').append('<td>Current Year</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td>');
+    return '<td>' + dataArray.join('</td><td>') + '</td>';
 }
 
-function resetData()
+/* Fills out an array with a default value (basically array.prototype.fill, but works on any browser) 
+ * defaultValue:    The value to fill with
+ * arrayToPopulate: The array to fill
+ * start:           The start index (the first member to be filled)
+ * end:             The end index (the last member to be filled)
+ */
+function populateInitialDataArray(defaultValue, arrayToPopulate, start, end)
+{
+    for (var i = start; i <= end; i++)
+    {
+        arrayToPopulate[i] = defaultValue;
+    }
+}
+
+/* Initializes a row in the stats table.
+ * rowSelector:     The CSS selector to get this row.
+ * datasetTitle:    The title of the dataset (the left-most column)
+ */
+function initializeTableRow(rowSelector, datasetTitle)
+{
+    var rowArray = [datasetTitle];
+    var NUMBER_OF_STATS_IN_TABLE = 13;
+    populateInitialDataArray(0, rowArray, 1, NUMBER_OF_STATS_IN_TABLE);
+    $(rowSelector).append(arrayToTableCells(rowArray));
+}
+
+/* Initializes all three data rows with 0s
+ */
+function initializeData()
+{
+    clearData();
+    initializeTableRow('#careerAverage', 'Career Average');
+    initializeTableRow('#threeYearAverage', 'Three Year Average');
+    initializeTableRow('#currentYear', 'Current Year');
+}
+
+/* Clears all data in the table
+ */
+function clearData()
 {
     $('#careerAverage').empty();
     $('#threeYearAverage').empty();
@@ -191,3 +211,23 @@ function getRecentData(playerId)
         $(tableRowId).append(tableRowString);
     }
 }
+
+$( document ).ready(function() {
+    initializeData();
+
+    $("#btnSearch").click(function() {
+    $.ajax({
+        type: 'GET',
+        url: 'http://localhost:3002/findPlayers?playerName=' + $("#playerSearch").val()
+    }).done(function(data){
+        $("#matchingPlayers").empty();
+        $("#matchingPlayers").append(data);
+        $('#matchingPlayers > li').each(function() {
+            var id = $(this).attr("id");
+            $(this).click(function() {
+                getRecentData(id)
+            });
+        })
+    });
+  });
+});
