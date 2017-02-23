@@ -82,43 +82,43 @@ app.get('/getPlayerData', function(request, response) {
       switch(cellNumber)
       {
         case 2:
-          statsObject['Games Played'] = data[i];
+          statsObject['Games Played'] = parseInt(data[i]);
           break;
 
         case 3:
-          statsObject['At Bats'] = data[i];
+          statsObject['At Bats'] = parseInt(data[i]);
           break;
 
         case 4:
-          statsObject['Plate Apperances'] = data[i];
+          statsObject['Plate Apperances'] = parseInt(data[i]);
           break;
 
         case 5:
-          statsObject['Hits'] = data[i];
+          statsObject['Hits'] = parseInt(data[i]);
           break;
 
         case 9:
-          statsObject['Home Runs'] = data[i];
+          statsObject['Home Runs'] = parseInt(data[i]);
           break;
 
         case 10:
-          statsObject['Runs'] = data[i];
+          statsObject['Runs'] = parseInt(data[i]);
           break;
 
         case 11:
-          statsObject['RBIs'] = data[i];
+          statsObject['RBIs'] = parseInt(data[i]);
           break;
 
         case 12:
-          statsObject['Walks'] = data[i];
+          statsObject['Walks'] = parseInt(data[i]);
           break;
 
         case 14:
-          statsObject['Strikeouts'] = data[i];
+          statsObject['Strikeouts'] = parseInt(data[i]);
           break;
 
         case 19:
-          statsObject['Steals'] = data[i];
+          statsObject['Steals'] = parseInt(data[i]);
           break;
 
         // End of the row, put the data into the return object
