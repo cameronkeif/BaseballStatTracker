@@ -107,6 +107,8 @@ function generateArrayForTablePopulation(data, label, numberOfSeasons)
     var totals;
     var stat;
     var RATIO_STAT_PRECISION_DIGITS = 3;
+    var COUNTING_STAT_PRECISION_DIGITS = 1;
+    var PERCENTAGE_STAT_PRECISION_DIGITS = 1;
 
     if (numberOfSeasons > data.length) {
         numberOfSeasons = data.length;
@@ -124,14 +126,16 @@ function generateArrayForTablePopulation(data, label, numberOfSeasons)
     }
 
     tableDataArray[0] = label;
-    tableDataArray[1] = totals['Games Played'] / numberOfSeasons;
-    tableDataArray[2] = totals['Plate Apperances'] / numberOfSeasons;
-    tableDataArray[3] = totals['Home Runs'] / numberOfSeasons;
-    tableDataArray[4] = totals['Runs'] / numberOfSeasons;
-    tableDataArray[5] = totals['RBIs'] / numberOfSeasons;
-    tableDataArray[6] = totals['Steals'] / numberOfSeasons;
-    tableDataArray[7] = calculateWalkPercentage(totals['Plate Apperances'], totals['Walks'], RATIO_STAT_PRECISION_DIGITS);
-    tableDataArray[8] = calculateStrikeoutPercentage(totals['Plate Apperances'], totals['Strikeouts'], RATIO_STAT_PRECISION_DIGITS);
+    tableDataArray[1] = decimalRound(totals['Games Played'] / numberOfSeasons, COUNTING_STAT_PRECISION_DIGITS);
+    tableDataArray[2] = decimalRound(totals['Plate Apperances'] / numberOfSeasons, COUNTING_STAT_PRECISION_DIGITS);
+    tableDataArray[3] = decimalRound(totals['Home Runs'] / numberOfSeasons, COUNTING_STAT_PRECISION_DIGITS);
+    tableDataArray[4] = decimalRound(totals['Runs'] / numberOfSeasons, COUNTING_STAT_PRECISION_DIGITS);
+    tableDataArray[5] = decimalRound(totals['RBIs'] / numberOfSeasons, COUNTING_STAT_PRECISION_DIGITS);
+    tableDataArray[6] = decimalRound(totals['Steals'] / numberOfSeasons, COUNTING_STAT_PRECISION_DIGITS);
+
+    tableDataArray[7] = calculateWalkPercentage(totals['Plate Apperances'], totals['Walks'], PERCENTAGE_STAT_PRECISION_DIGITS);
+    tableDataArray[8] = calculateStrikeoutPercentage(totals['Plate Apperances'], totals['Strikeouts'], PERCENTAGE_STAT_PRECISION_DIGITS);
+    
     tableDataArray[9] = calculateIsolatedPower(totals['At Bats'], totals['Doubles'], totals['Triples'], totals['Home Runs'], RATIO_STAT_PRECISION_DIGITS);;
     tableDataArray[10] = calculateBabip(totals['At Bats'], totals['Hits'], totals['Home Runs'], totals['Sacrifice Flys'], totals['Strikeouts'], RATIO_STAT_PRECISION_DIGITS);
     tableDataArray[11] = calculateBattingAverage(totals['Plate Apperances'], totals['Hits'], RATIO_STAT_PRECISION_DIGITS);
@@ -143,6 +147,7 @@ function generateArrayForTablePopulation(data, label, numberOfSeasons)
 
 function getRecentData(playerId)
 {
+    var careerAverage, threeYearAverage, currentYear;
     clearData();
     $.ajax({
         type: 'GET',
@@ -150,7 +155,14 @@ function getRecentData(playerId)
         data: {playerId: playerId},
         success: function(data) {
             data = JSON.parse(data);
-            console.log(generateArrayForTablePopulation(data, 'Current Year', 1));
+            careerAverage = generateArrayForTablePopulation(data, 'Career Average', data.length);
+            $('#careerAverage').append(arrayToTableCells(careerAverage))
+
+            threeYearAverage = generateArrayForTablePopulation(data, 'Three Year Average', 3);
+            $('#threeYearAverage').append(arrayToTableCells(threeYearAverage))
+            
+            currentYear = generateArrayForTablePopulation(data, 'Current Year', 1);
+            $('#currentYear').append(arrayToTableCells(currentYear))
         }
     });
 }
