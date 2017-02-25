@@ -1,0 +1,1 @@
+mongoimport -d baseballStatTracker -c players --type csv --file players.csv --headerline
