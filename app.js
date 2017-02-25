@@ -6,6 +6,7 @@ var stylus = require('stylus')
 var nib = require('nib')
 var xray = require('x-ray');
 var logger = require('morgan');
+var mongoClient = require('mongodb').MongoClient;
 
 var app = express()
 
@@ -33,31 +34,36 @@ app.get('/', function (req, res) {
 });
 
 /* Fetches all matching players from the Database
- * Matching is defined as any part of the name containing that string. aka "John" 
- * would return "John Smith" and "Jim Johnson"
+ * Matching is defined as any part of the name containing that string, case insensitive. 
+ * aka "John" would return "John Smith", XYZjohn Jim, and "Jim Johnson"
  */
 app.get('/findPlayers', function(request, response) {
-  var playerName = request.query.playerName;
-  var sqlite3 = require('sqlite3').verbose();
-  var db = new sqlite3.Database('baseball.db');
-  var matchingPlayers = "";
-  db.each("SELECT * FROM players WHERE name LIKE '%" + playerName + "%';",
-    function(err, row)
-    {
-      if(err)
-      {
-        console.log(err);
+  var url = 'mongodb://localhost:27017/baseballStatTracker';
+  var playerName = 'cab';
+  var matchingPlayers = '';
+  var playersCollection;
+  var playersCollectionStream;
+  var i;
+
+  mongoClient.connect(url, function(error, db) {
+    if (error) {
+       response.status(500).send("Unable to connect to database");
+    }
+
+    playersCollection = db.collection('players');
+    playersCollection.find({'name': new RegExp('\.*' + playerName + '\.', 'i')}).toArray(function(error, items) {
+      if (error){
+        response.status(500).send("An error occurred while searching '" + playerName +"'");
       }
-      else
-      {
-        matchingPlayers += '<li id="' + row.ID + '">' + row.NAME + ' - ' + row.TEAM + '</li>';
+
+      for(i = 0; i < items.length; i++) {
+        matchingPlayers += '<li id="' + items[i]['id'] + '">' + items[i]['name'] + ' - ' + items[i]['team'] + '</li>';
       }
-    },
-    function(err, rows) 
-    {
       response.send(matchingPlayers);
     });
-});
+    db.close();
+  });
+})
 
 /* Gets all the COUNTING stats for the player.
  * We want the counting stats so the true averages over multiple seasons can be calculated.
