@@ -97,6 +97,18 @@ app.get('/getPlayerData', function(request, response) {
           statsObject['Hits'] = parseInt(data[i]);
           break;
 
+        case 6:
+          statsObject['Singles'] = parseInt(data[i]);
+          break;
+
+        case 7:
+          statsObject['Doubles'] = parseInt(data[i]);
+          break;
+
+        case 8:
+          statsObject['Triples'] = parseInt(data[i]);
+          break;
+
         case 9:
           statsObject['Home Runs'] = parseInt(data[i]);
           break;
@@ -115,6 +127,14 @@ app.get('/getPlayerData', function(request, response) {
 
         case 14:
           statsObject['Strikeouts'] = parseInt(data[i]);
+          break;
+        
+        case 15:
+          statsObject['Hit By Pitch'] = parseInt(data[i]);
+          break;
+
+        case 16:
+          statsObject['Sacrifice Flys'] = parseInt(data[i]);
           break;
 
         case 19:
