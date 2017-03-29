@@ -39,7 +39,7 @@ app.get('/', function (req, res) {
  */
 app.get('/findPlayers', function(request, response) {
   var url = 'mongodb://localhost:27017/baseballStatTracker';
-  var playerName = 'cab';
+  var playerName = request.query.playerName;
   var matchingPlayers = '';
   var playersCollection;
   var playersCollectionStream;
