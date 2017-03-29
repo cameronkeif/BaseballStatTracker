@@ -170,18 +170,22 @@ function getRecentData(playerId)
 $(document).ready(function() {
     initializeData();
     $("#btnSearch").click(function() {
-    $.ajax({
-        type: 'GET',
-        url: 'http://localhost:3002/findPlayers?playerName=' + $("#playerSearch").val()
-    }).done(function(data){
-        $("#matchingPlayers").empty();
-        $("#matchingPlayers").append(data);
-        $('#matchingPlayers > li').each(function() {
-            var id = $(this).attr("id");
-            $(this).click(function() {
-                getRecentData(id)
-            });
-        })
+        if ($("#playerSearch").val().length < 3) {
+            alert('Please type at least 3 characters.');
+            return;
+        }
+        $.ajax({
+            type: 'GET',
+            url: 'http://localhost:3002/findPlayers?playerName=' + $("#playerSearch").val()
+        }).done(function(data){
+            $("#matchingPlayers").empty();
+            $("#matchingPlayers").append(data);
+            $('#matchingPlayers > li').each(function() {
+                var id = $(this).attr("id");
+                $(this).click(function() {
+                    getRecentData(id)
+                });
+            })
+        });
     });
-  });
 });
